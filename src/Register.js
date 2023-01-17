@@ -2,6 +2,9 @@ import { Button, Callout, FormGroup, InputGroup } from "@blueprintjs/core";
 import React, { useContext, useState } from "react";
 import { UserContext } from "./context/UserContext";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { selectToken, setToken } from "./store/token_slice";
+
 const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -9,7 +12,9 @@ const Register = () => {
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [userContext, setUserContext] = useContext(UserContext);
+//   const [userContext, setUserContext] = useContext(UserContext);
+
+  const dispatch = useDispatch(setToken);
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
@@ -40,9 +45,10 @@ const Register = () => {
           }
         } else {
           const data = await response.json();
-          setUserContext((oldValues) => {
-            return { ...oldValues, token: data.token };
-          });
+			 dispatch(setToken(data.token));
+         //  setUserContext((oldValues) => {
+         //    return { ...oldValues, token: data.token };
+         //  });
         }
       })
       .catch((error) => {
