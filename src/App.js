@@ -1,16 +1,25 @@
-import { Card, Tab, Tabs } from "@blueprintjs/core";
+// import { Card, Tab, Tabs } from "@blueprintjs/core";
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
+import Autorisation from './components/pages/login/Autorisation';
+
 import { useCallback, useContext, useEffect, useState } from "react";
 // import { UserContext } from "./context/UserContext";
 import Loader from "./Loader";
-import Login from "./Login";
-import Register from "./Register";
+// import Login from "./components/pages/login/Login";
+// import Register from "./Register";
 import Welcome from "./Welcome";
 
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken, setToken } from "./store/token_slice";
 
 function App() {
-	const [currentTab, setCurrentTab] = useState("login");
+	// const [currentTab, setCurrentTab] = useState("login");
+	const [value, setValue] = useState('1');
 	// const [userContext, setUserContext] = useContext(UserContext);
 
 	const dispatch = useDispatch();
@@ -41,9 +50,9 @@ function App() {
 		});
 	}, [setToken]);
 
-	useEffect(() => {
-		verifyUser();
-	}, [verifyUser]);
+	// useEffect(() => {
+	// 	verifyUser();
+	// }, [verifyUser]);
 
 	/**
 	 * Sync logout across tabs
@@ -55,21 +64,38 @@ function App() {
 		}
 	}, []);
 
-	useEffect(() => {
-		window.addEventListener("storage", syncLogout);
-		return () => {
-			window.removeEventListener("storage", syncLogout);
-		};
-	}, [syncLogout]);
+	// useEffect(() => {
+	// 	window.addEventListener("storage", syncLogout);
+	// 	return () => {
+	// 		window.removeEventListener("storage", syncLogout);
+	// 	};
+	// }, [syncLogout]);
+
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
 
 	return token === null ? (
-		<Card elevation="1">
-			<Tabs id="Tabs" onChange={setCurrentTab} selectedTabId={currentTab}>
-				<Tab id="login" title="Login" panel={<Login />} />
-				<Tab id="register" title="Register" panel={<Register />} />
-				<Tabs.Expander />
-			</Tabs>
-		</Card>
+	<Autorisation />
+		// <Box sx={{ width: '100%', typography: 'body1' }}>
+		// 	<TabContext value={value}>
+		// 		<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+		// 			<TabList onChange={handleChange} aria-label="lab API tabs example">
+		// 				<Tab label="Login" value="1" />
+		// 				<Tab label="Register" value="2" />
+		// 			</TabList>
+		// 		</Box>
+		// 		<TabPanel value="1">{<Login />}</TabPanel>
+		// 		<TabPanel value="2">{<Register />}</TabPanel>
+		// 	</TabContext>
+		// </Box>
+		// <Card elevation="1">
+		// 	<Tabs id="Tabs" onChange={setCurrentTab} selectedTabId={currentTab}>
+		// 		<Tab id="login" title="Login" panel={<Login />} />
+		// 		<Tab id="register" title="Register" panel={<Register />} />
+		// 		<Tabs.Expander />
+		// 	</Tabs>
+		// </Card>
 	) : token ? (
 		<Welcome />
 	) : (
