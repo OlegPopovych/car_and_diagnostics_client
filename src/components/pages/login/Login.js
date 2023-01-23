@@ -35,6 +35,7 @@ const Login = () => {
 		e.preventDefault();
 		setIsSubmitting(true);
 		setError("");
+		console.log({ email, password });
 
 		const genericErrorMessage = "Something went wrong! Please try again later.";
 
