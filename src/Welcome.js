@@ -8,7 +8,7 @@ import { selectToken, setToken } from "./store/token_slice";
 import { selectUser, setUser } from "./store/user_slice";
 
 const Welcome = () => {
-	const [userContext, setUserContext] = useContext(UserContext);
+	// const [userContext, setUserContext] = useContext(UserContext);
 
 	const token = useSelector(selectToken);
 	const user = useSelector(selectUser);

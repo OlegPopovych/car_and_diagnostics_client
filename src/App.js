@@ -6,6 +6,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
 import Autorisation from './components/pages/login/Autorisation';
+import CarListPage from './components/pages/carListPage/CarListPage';
 
 import { useCallback, useContext, useEffect, useState } from "react";
 // import { UserContext } from "./context/UserContext";
@@ -50,9 +51,9 @@ function App() {
 		});
 	}, [setToken]);
 
-	// useEffect(() => {
-	// 	verifyUser();
-	// }, [verifyUser]);
+	useEffect(() => {
+		verifyUser();
+	}, [verifyUser]);
 
 	/**
 	 * Sync logout across tabs
@@ -64,19 +65,29 @@ function App() {
 		}
 	}, []);
 
-	// useEffect(() => {
-	// 	window.addEventListener("storage", syncLogout);
-	// 	return () => {
-	// 		window.removeEventListener("storage", syncLogout);
-	// 	};
-	// }, [syncLogout]);
+	useEffect(() => {
+		window.addEventListener("storage", syncLogout);
+		return () => {
+			window.removeEventListener("storage", syncLogout);
+		};
+	}, [syncLogout]);
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
 
-	return token === null ? (
-	<Autorisation />
+	if (!token) {
+		return (
+			<Autorisation />
+		)
+	}
+	// token === null ? 
+	return (
+		<div className="wrapper">
+			<CarListPage />
+			{/* <Welcome /> */}
+		</div>
+
 		// <Box sx={{ width: '100%', typography: 'body1' }}>
 		// 	<TabContext value={value}>
 		// 		<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -96,10 +107,10 @@ function App() {
 		// 		<Tabs.Expander />
 		// 	</Tabs>
 		// </Card>
-	) : token ? (
-		<Welcome />
-	) : (
-		<Loader />
+		// ) : token ? (
+		// 	<Welcome />
+		// ) : (
+		// 	<Loader />
 	);
 }
 
