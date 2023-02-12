@@ -1,16 +1,19 @@
-import { Callout, InputGroup } from "@blueprintjs/core";
-// import { Button, Callout, FormGroup, InputGroup } from "@blueprintjs/core";
-import React, { useContext, useState } from "react";
-// import { UserContext } from "./context/UserContext";
+import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	Routes,
+	Route,
+	NavLink,
+	Navigate,
+	useNavigate,
+	useLocation,
+} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
@@ -18,7 +21,6 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 
-import { useDispatch, useSelector } from 'react-redux';
 import { setToken, selectToken } from "../../../store/token_slice";
 
 const Login = () => {
@@ -29,7 +31,47 @@ const Login = () => {
 	// const [userContext, setUserContext] = useContext(UserContext);
 	const [showPassword, setShowPassword] = useState(false);
 
-	const dispatch = useDispatch(setToken);
+	const token = useSelector(selectToken);
+	const dispatch = useDispatch();
+
+	const navigate = useNavigate();
+	const location = useLocation();
+
+
+
+
+	const verifyUser = useCallback(() => {
+		fetch(process.env.REACT_APP_API_ENDPOINT + "users/refreshToken", {
+			method: "POST",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		}).then(async (response) => {
+			if (response.ok) {
+				const data = await response.json();
+				console.log('fetch!!!');
+				dispatch(setToken(data.token));
+				navigate('/');
+				// setUserContext((oldValues) => {
+				// 	return { ...oldValues, token: data.token };
+				// });
+			} else {
+				dispatch(setToken(null));
+				// setUserContext((oldValues) => {
+				// 	return { ...oldValues, token: null };
+				// });
+			}
+			// call refreshToken every 5 minutes to renew the authentication token.
+			setTimeout(verifyUser, 5 * 60 * 1000);
+		});
+	}, [setToken]); //setToken
+
+
+
+
+
+	useEffect(() => {
+		verifyUser();
+	}, [verifyUser]);
 
 	const formSubmitHandler = (e) => {
 		e.preventDefault();
@@ -55,14 +97,16 @@ const Login = () => {
 					} else {
 						setError(genericErrorMessage);
 					}
+
+					const origin = location.state?.from?.pathname || '/';
+					navigate(origin);
 				} else {
 					const data = await response.json();
 
 					dispatch(setToken(data.token));
 
-					// setUserContext((oldValues) => {
-					// 	return { ...oldValues, token: data.token };
-					// });
+					const origin = location.state?.from?.pathname || '/';
+					navigate(origin);
 				}
 			})
 			.catch((error) => {
@@ -74,9 +118,7 @@ const Login = () => {
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-	const handleMouseDownPassword = (event) => {
-		event.preventDefault();
-	};
+	const handleMouseDownPassword = (event) => { event.preventDefault(); };
 
 	return (
 		<>
@@ -122,39 +164,12 @@ const Login = () => {
 						intent="primary"
 						disabled={isSubmitting}
 						text={`${isSubmitting ? "Signing In" : "Sign In"}`}
-						fill
 						fullWidth
 						type="submit">
 						Success
 					</Button>
 				</div>
 			</Box>
-			{/* <FormGroup label="Email" labelFor="email">
-					<InputGroup
-						id="email"
-						placeholder="Email"
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-				</FormGroup>
-				<FormGroup label="Password" labelFor="password">
-					<InputGroup
-						id="password"
-						placeholder="Password"
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</FormGroup>
-				<Button
-					intent="primary"
-					disabled={isSubmitting}
-					text={`${isSubmitting ? "Signing In" : "Sign In"}`}
-					fill
-					type="submit"
-				/> */}
-			{/* </form> */}
 		</>
 	);
 };

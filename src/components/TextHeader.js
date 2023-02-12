@@ -56,7 +56,7 @@ function stringAvatar(name) {
 
 //AVATAR
 
-const HeaderLayout = () => {
+const TestHeaderLayout = () => {
 	const token = useSelector(selectToken);
 	const user = useSelector(selectUser);
 
@@ -91,12 +91,12 @@ const HeaderLayout = () => {
 		});
 	}, [token]);   //setUserContext,
 
-	useEffect(() => {
-		// fetch only when user details are not present
-		if (!user) {
-			fetchUserDetails();
-		}
-	}, [user, fetchUserDetails]); //fetchUserDetails
+	// useEffect(() => {
+	// 	// fetch only when user details are not present
+	// 	if (!user) {
+	// 		fetchUserDetails();
+	// 	}
+	// }, [user, fetchUserDetails]); //fetchUserDetails
 
 	const logoutHandler = () => {
 		fetch(process.env.REACT_APP_API_ENDPOINT + "users/logout", {
@@ -112,12 +112,7 @@ const HeaderLayout = () => {
 		});
 	};
 
-	console.log(user);
-	return user === null ? (
-		"Error Loading User details"
-	) : !user ? (
-		<Loader />
-	) : (
+	return (
 		<>
 			<Box
 				component="div"
@@ -170,9 +165,9 @@ const HeaderLayout = () => {
 								padding: "0px 10px",
 								fontSize: "16px",
 								fontWeight: "400",
-							}}>{`${user.firstName} ${user.lastName}`}
+							}}>{`Олег Попович`}
 						</Typography>
-						<Avatar {...stringAvatar(`${user.firstName} ${user.lastName}`)}
+						<Avatar {...stringAvatar(`Олег Попович`)}
 							sx={{
 								width: "38px",
 								height: "38px"
@@ -194,4 +189,4 @@ const HeaderLayout = () => {
 	);
 }
 
-export default HeaderLayout;
+export default TestHeaderLayout;

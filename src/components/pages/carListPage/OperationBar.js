@@ -7,14 +7,25 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Modal from '@mui/material/Modal';
 
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 
-import CarModal from '../login/CarModal';
+import CarModal from '../../CarModal';
 
 const OperationBar = () => {
 	const [open, setOpen] = useState(false);
 	const handleOpen = () => setOpen(true);
 	const handleClose = () => setOpen(false);
+
+	// const ModalWindow = forwardRef((props, ref) =>
+	// 	<Modal
+	// 		open={open}
+	// 		onClose={handleClose}
+	// 		aria-labelledby="modal-modal-title"
+	// 		aria-describedby="modal-modal-description"
+	// 	>
+	// 		<CarModal />
+	// 	</Modal>
+	// );
 
 	return (
 		<Box
@@ -81,13 +92,17 @@ const OperationBar = () => {
 						}} >1 300 автомобілів</Typography>
 				</Box>
 			</Box>
-			<Modal
+			{/* <Modal component={ModalWindow} />; */}
+			<Modal disableEnforceFocus
 				open={open}
 				onClose={handleClose}
 				aria-labelledby="modal-modal-title"
 				aria-describedby="modal-modal-description"
 			>
-				<CarModal />
+				<>
+					<CarModal />
+				</>
+
 			</Modal>
 		</Box>
 

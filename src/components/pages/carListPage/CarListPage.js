@@ -7,7 +7,7 @@ import OperationBar from "./OperationBar";
 const CarListPage = () => {
 	return (
 		<>
-			<Header />
+			{/* <Header /> */}
 			<Container
 				maxWidth="lg"
 				sx={{
