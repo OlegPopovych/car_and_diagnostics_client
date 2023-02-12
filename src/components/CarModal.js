@@ -6,9 +6,15 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ListSubheader from '@mui/material/ListSubheader';
 import Button from '@mui/material/Button';
-
-import { useState } from "react";
+import Alert from '@mui/material/Alert';
 import { TextField } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import { selectToken, setToken } from '../store/token_slice';
+import { carCreated } from '../store/cars_slice';
+import { useState } from "react";
 
 const style = {
 	position: 'absolute',
@@ -27,8 +33,92 @@ const style = {
 };
 
 const CarModal = () => {
+
+	const token = useSelector(selectToken);
+
+	const [vin, setVin] = useState('');
+	const [carNumber, setCarNumber] = useState('');
+	const [description, setDescription] = useState('');
 	const [model, setModel] = useState('');
 	const [group, setGroup] = useState('');
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [error, setError] = useState("");
+	const [successMessage, setSuccessMessage] = useState('');
+
+	const dispatch = useDispatch();
+
+	const formSubmitHandler = (e) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+		const newCar = { _id: uuidv4(), vin, carNumber, description, model, group };
+		console.log(newCar);
+
+		setError("");
+
+		const genericErrorMessage = "Something went wrong! Please try again later.";
+
+		fetch(
+			process.env.REACT_APP_API_ENDPOINT + "cars/createnew", {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(newCar),
+		})
+			.then(async (response) => {
+				setIsSubmitting(false);
+				if (!response.ok) {
+					setError(genericErrorMessage);
+					if (response.status === 400) {
+						setError("Error inserting matches!");
+					} else if (response.status === 401) {
+						// setError("Invalid email and password combination.");
+					} else {
+						// setError(genericErrorMessage);
+					}
+
+					// const origin = location.state?.from?.pathname || '/';
+					// navigate(origin);
+				} else {
+					console.log(response);
+					handleSuccessMessage();
+
+					// const data = await response.json();
+
+					// dispatch(setToken(data.token));
+
+					// const origin = location.state?.from?.pathname || '/';
+					// navigate(origin);
+				}
+			})
+			.then(
+				dispatch(carCreated(newCar)),
+				setVin(''),
+				setCarNumber(''),
+				setDescription(""),
+				setModel(""),
+				setGroup(""),
+			)
+			.catch((error) => {
+				setIsSubmitting(false);
+				console.log(error)
+				setError(genericErrorMessage);
+			});
+
+	}
+
+	const handleVinChange = (event) => {
+		setVin(event.target.value);
+	};
+	const handleCarNumberChange = (event) => {
+		setCarNumber(event.target.value);
+	};
+	const handleDescriptionChange = (event) => {
+		setDescription(event.target.value);
+	};
 
 	const handleModelChange = (event) => {
 		setModel(event.target.value);
@@ -37,13 +127,18 @@ const CarModal = () => {
 		setGroup(event.target.value);
 	};
 
+	const handleSuccessMessage = () => {
+		setSuccessMessage("Вітаю! Новий автомобіль збережено!");
+		let SuccessMessage = setTimeout(() => setSuccessMessage(''), 3000);
+	}
+
 	return (
 		<Box
 			sx={style}
-			omponent={'form'}
-		// onSubmit={formSubmitHandler}
+			component={'form'}
+			onSubmit={formSubmitHandler}
 		>
-
+			{error && <Alert severity="error">{error}</Alert>}
 			<Typography
 				variant="h1"
 				sx={{
@@ -62,9 +157,9 @@ const CarModal = () => {
 				label="Номер кузова"
 				type="text"
 				id="enterVin"
+				value={vin}
+				onChange={handleVinChange}
 
-			// placeholder="First Name"
-			// onChange={(e) => setFirstName(e.target.value)}
 			/>
 			<TextField
 				sx={{
@@ -76,9 +171,8 @@ const CarModal = () => {
 				type="text"
 				id="carNumber"
 				helperText="Не обов'язково"
-
-			// placeholder="First Name"
-			// onChange={(e) => setFirstName(e.target.value)}
+				value={carNumber}
+				onChange={handleCarNumberChange}
 			/>
 
 			<FormControl sx={{ margin: "0px 0px 27px 0px" }} size="small" fullWidth>
@@ -131,15 +225,19 @@ const CarModal = () => {
 				label="Додаткова інформація про автомобіль"
 				multiline
 				rows={3}
+				value={description}
+				onChange={handleDescriptionChange}
 			/>
 
 			<Button
+				disabled={isSubmitting}
 				variant="contained"
 				type="submit"
 				color="success"
 			>
 				ДОДАТИ АВТО
 			</Button>
+			{successMessage && <Alert severity="success">{successMessage}</Alert>}
 		</Box>
 	);
 }

@@ -7,11 +7,12 @@ import Modal from '@mui/material/Modal';
 import { useState } from "react";
 import { TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 
 
 
-const Car = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', theDateOfTheLastDiagnosis = "" }) => {
+const DiagnosticItem = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', theDateOfTheLastDiagnosis = "" }) => {
 
 	// const [open, setOpen] = useState(false);
 	// const handleOpen = () => setOpen(true);
@@ -20,80 +21,64 @@ const Car = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', theDateOfTheLa
 	return (
 		<>
 			<Grid container
+				columns={8}
 				sx={{
-					height: "59px",
+					height: "50px",
 					alignItems: "center"
-				}}>
+				}} >
 				<Grid item
-					lg={3}
+					lg={2}
 					sx={{
 						alignItems: "center"
 					}} >
-					<Link to={`/cars/car/${vin}`}>{
-						<Typography
-							sx={{
-								cursor: "pointer",
-								fontSize: "14px",
-								fontWeight: "400",
-								padding: "0px 10px"
-							}}>
-							{vin}
-						</Typography>}
-					</Link>
+					<Typography
+						sx={{
+							fontSize: "14px",
+							fontWeight: "400",
+							padding: "0px 10px"
+						}}>12412424
+					</Typography>
+				</Grid>
+				<Grid item
+					lg={1}
+					sx={{
+						alignItems: "center"
+					}} >
+					<Typography
+						sx={{
+							fontSize: "14px",
+							fontWeight: "400",
+							padding: "0px 10px"
+						}}>321323и
+					</Typography>
+				</Grid>
+				<Grid item
+					lg={2}
+					sx={{
+						alignItems: "center"
+					}} >
+					<Typography
+						sx={{
+							fontSize: "14px",
+							fontWeight: "400",
+							padding: "0px 10px"
+						}}>Мишка Гайка
+					</Typography>
+				</Grid>
+				<Grid item
+					lg={2}
+					sx={{
+						alignItems: "center"
+					}} >
+					<Typography
+						sx={{
+							fontSize: "14px",
+							fontWeight: "400",
+							padding: "0px 10px"
+						}}>01/01/2023
+					</Typography>
+				</Grid>
 
-				</Grid>
-				<Grid item
-					lg={2}
-					sx={{
-						alignItems: "center"
-					}} >
-					<Typography
-						sx={{
-							fontSize: "14px",
-							fontWeight: "400",
-							padding: "0px 10px"
-						}}>{carNumber}
-					</Typography>
-				</Grid>
-				<Grid item
-					lg={2}
-					sx={{
-						alignItems: "center"
-					}} >
-					<Typography
-						sx={{
-							fontSize: "14px",
-							fontWeight: "400",
-							padding: "0px 10px"
-						}}>{model}
-					</Typography>
-				</Grid>
-				<Grid item
-					lg={2}
-					sx={{
-						alignItems: "center"
-					}} >
-					<Typography
-						sx={{
-							fontSize: "14px",
-							fontWeight: "400",
-							padding: "0px 10px"
-						}}>{theNumberOfDiagnoses}
-					</Typography>
-				</Grid>
-				<Grid item
-					lg={2}
-					sx={{
-						alignItems: "center"
-					}} >
-					<Typography
-						sx={{
-							fontSize: "14px",
-							fontWeight: "400",
-							padding: "0px 10px"
-						}}>{theDateOfTheLastDiagnosis}
-					</Typography>
-				</Grid>
 				<Grid item
 					lg={1}
 					sx={{
@@ -103,26 +88,21 @@ const Car = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', theDateOfTheLa
 					// onClick={handleOpen}
 					>
 						<EditIcon />
+					</IconButton><IconButton
+					// onClick={handleOpen}
+					>
+						<DeleteOutlineOutlinedIcon />
 					</IconButton>
 				</Grid>
-				<Box
-					sx={{
-						backgroundColor: "rgba(33, 33, 33, 0.08)",
-						width: "100%",
-						height: "1px"
-					}} />
 			</Grid>
-			{/* 
-			<Modal
-				open={open}
-				onClose={handleClose}
-				aria-labelledby="modal-modal-title"
-				aria-describedby="modal-modal-description"
-			>
-				<CarModal />
-			</Modal> */}
+			<Box
+				sx={{
+					backgroundColor: "rgba(33, 33, 33, 0.08)",
+					width: "100%",
+					height: "1px"
+				}} />
 		</>
 	);
 }
 
-export default Car;
+export default DiagnosticItem;

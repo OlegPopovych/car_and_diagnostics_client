@@ -1,27 +1,26 @@
-// import { Card, Tab, Tabs } from "@blueprintjs/core";
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectToken, setToken } from "./store/token_slice";
+import { useCallback, useContext, useEffect, useState } from "react";
+
+import {
+	Routes,
+	Route,
+	NavLink,
+	Navigate,
+	useNavigate,
+	useLocation,
+} from 'react-router-dom';
 
 import Autorisation from './components/pages/login/Autorisation';
 import CarListPage from './components/pages/carListPage/CarListPage';
+import HeaderLayout from './components/Header';
+import SingleCarPage from './components/pages/carPage/SingleCarPage';
+import TestHeaderLayout from './components/TextHeader';
 
-import { useCallback, useContext, useEffect, useState } from "react";
-// import { UserContext } from "./context/UserContext";
 import Loader from "./Loader";
-// import Login from "./components/pages/login/Login";
-// import Register from "./Register";
 import Welcome from "./Welcome";
 
-import { useDispatch, useSelector } from 'react-redux';
-import { selectToken, setToken } from "./store/token_slice";
-
 function App() {
-	// const [currentTab, setCurrentTab] = useState("login");
-	const [value, setValue] = useState('1');
-	// const [userContext, setUserContext] = useContext(UserContext);
 
 	const dispatch = useDispatch();
 	const token = useSelector(selectToken);
@@ -34,7 +33,7 @@ function App() {
 		}).then(async (response) => {
 			if (response.ok) {
 				const data = await response.json();
-
+				console.log('fetch!!!');
 				dispatch(setToken(data.token));
 
 				// setUserContext((oldValues) => {
@@ -49,7 +48,7 @@ function App() {
 			// call refreshToken every 5 minutes to renew the authentication token.
 			setTimeout(verifyUser, 5 * 60 * 1000);
 		});
-	}, [setToken]);
+	}, [setToken]); //setToken
 
 	useEffect(() => {
 		verifyUser();
@@ -72,46 +71,87 @@ function App() {
 		};
 	}, [syncLogout]);
 
-	const handleChange = (event, newValue) => {
-		setValue(newValue);
-	};
-
-	if (!token) {
-		return (
-			<Autorisation />
-		)
-	}
-	// token === null ? 
 	return (
-		<div className="wrapper">
-			<CarListPage />
-			{/* <Welcome /> */}
-		</div>
 
-		// <Box sx={{ width: '100%', typography: 'body1' }}>
-		// 	<TabContext value={value}>
-		// 		<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-		// 			<TabList onChange={handleChange} aria-label="lab API tabs example">
-		// 				<Tab label="Login" value="1" />
-		// 				<Tab label="Register" value="2" />
-		// 			</TabList>
-		// 		</Box>
-		// 		<TabPanel value="1">{<Login />}</TabPanel>
-		// 		<TabPanel value="2">{<Register />}</TabPanel>
-		// 	</TabContext>
-		// </Box>
-		// <Card elevation="1">
-		// 	<Tabs id="Tabs" onChange={setCurrentTab} selectedTabId={currentTab}>
-		// 		<Tab id="login" title="Login" panel={<Login />} />
-		// 		<Tab id="register" title="Register" panel={<Register />} />
-		// 		<Tabs.Expander />
-		// 	</Tabs>
-		// </Card>
-		// ) : token ? (
-		// 	<Welcome />
-		// ) : (
-		// 	<Loader />
+		<Routes>
+			<Route path="/" element={<ProtectedRoute><HeaderLayout /></ProtectedRoute>} >
+				<Route index element={
+					<ProtectedRoute>
+						<CarListPage />
+					</ProtectedRoute>
+				} />
+				<Route path="/cars/car/:vin" element={
+					<ProtectedRoute>
+						<SingleCarPage />
+					</ProtectedRoute>
+				} />
+			</Route >
+			<Route path="/login" element={<Autorisation />} />
+			<Route path="*" element={<NoMatch />} />
+		</Routes >
+
+		// <div className="wrapper">
+		// 	<SingleCarPage />
+		// </div>
 	);
 }
+
+const NoMatch = () => {
+	return <p>There's nothing here: 404!</p>;
+};
+
+const ProtectedRoute = ({ children }) => {
+	const location = useLocation();
+	const token = useSelector(selectToken);
+
+
+
+
+
+	// const dispatch = useDispatch();
+	// const verifyUser =  useCallback( async () => {
+	// 	await fetch(process.env.REACT_APP_API_ENDPOINT + "users/refreshToken", {
+	// 		method: "POST",
+	// 		credentials: "include",
+	// 		headers: { "Content-Type": "application/json" },
+	// 	}).then(async (response) => {
+	// 		if (response.ok) {
+	// 			const data = await response.json();
+
+	// 			dispatch(setToken(data.token));
+
+	// 			// setUserContext((oldValues) => {
+	// 			// 	return { ...oldValues, token: data.token };
+	// 			// });
+	// 		} else {
+	// 			dispatch(setToken(null));
+	// 			// setUserContext((oldValues) => {
+	// 			// 	return { ...oldValues, token: null };
+	// 			// });
+	// 		}
+	// 		// call refreshToken every 5 minutes to renew the authentication token.
+	// 		setTimeout(verifyUser, 5 * 60 * 1000);
+	// 	});
+	// }, [setToken]); //setToken
+
+	// useEffect(() => {
+	// 	console.log('fetch***');
+	// 	verifyUser();
+	// }, [verifyUser]);
+
+
+
+
+
+
+
+
+
+	if (!token) {
+		return <Navigate to="/login" replace state={{ from: location }} />;
+	}
+
+	return children;
+};
 
 export default App;
