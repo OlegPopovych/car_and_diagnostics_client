@@ -16,6 +16,8 @@ import CarListPage from './components/pages/carListPage/CarListPage';
 import HeaderLayout from './components/Header';
 import SingleCarPage from './components/pages/carPage/SingleCarPage';
 import TestHeaderLayout from './components/TextHeader';
+import DiagnosticCreatePage from './components/pages/diagnosticCreatePage/DiagnosticCreatePage';
+import TestHeader from './components/testHeader';
 
 import Loader from "./Loader";
 import Welcome from "./Welcome";
@@ -50,9 +52,9 @@ function App() {
 		});
 	}, [setToken]); //setToken
 
-	useEffect(() => {
-		verifyUser();
-	}, [verifyUser]);
+	// useEffect(() => {
+	// 	verifyUser();
+	// }, [verifyUser]);
 
 	/**
 	 * Sync logout across tabs
@@ -72,23 +74,43 @@ function App() {
 	}, [syncLogout]);
 
 	return (
+		<>
+			<Routes>
+				<Route path="/" element={<TestHeader />} >
+					<Route index element={
+						<DiagnosticCreatePage />
+					} />
+				</Route>
+			</Routes>
 
-		<Routes>
-			<Route path="/" element={<ProtectedRoute><HeaderLayout /></ProtectedRoute>} >
-				<Route index element={
-					<ProtectedRoute>
-						<CarListPage />
-					</ProtectedRoute>
-				} />
-				<Route path="/cars/car/:vin" element={
-					<ProtectedRoute>
-						<SingleCarPage />
-					</ProtectedRoute>
-				} />
-			</Route >
-			<Route path="/login" element={<Autorisation />} />
-			<Route path="*" element={<NoMatch />} />
-		</Routes >
+
+
+			{/* <TestHeader>
+				<DiagnosticCreatePage />
+			</TestHeader> */}
+
+		</>
+		// <Routes>
+		// 	<Route path="/" element={<ProtectedRoute><HeaderLayout /></ProtectedRoute>} >
+		// 		<Route index element={
+		// 			<ProtectedRoute>
+		// 				<CarListPage />
+		// 			</ProtectedRoute>
+		// 		} />
+		// 		<Route path="/cars/car/:vin" element={
+		// 			<ProtectedRoute>
+		// 				<SingleCarPage />
+		// 			</ProtectedRoute>
+		// 		} />
+		// 		<Route path="/cars/car/:vin/newdiagnostic" element={
+		// 			<ProtectedRoute>
+		// 				<DiagnosticCreatePage />
+		// 			</ProtectedRoute>
+		// 		} />
+		// 	</Route >
+		// 	<Route path="/login" element={<Autorisation />} />
+		// 	<Route path="*" element={<NoMatch />} />
+		// </Routes >
 
 		// <div className="wrapper">
 		// 	<SingleCarPage />

@@ -191,7 +191,7 @@ const SingleCarPage = () => {
 									fontWeight: "600",
 									marginBottom: "22px"
 								}} >
-								{`Картка автомобіля ${car[0] ? car[0].carNumber : ""}`}
+								{`Картка автомобіля [${car[0] ? car[0].carNumber : ""}]`}
 							</Typography>
 						</Box>
 						<Box
@@ -200,11 +200,23 @@ const SingleCarPage = () => {
 								flexDirection: "column",
 								alignItems: "end"
 							}}>
-							<Button variant="outlined" startIcon={<AddIcon />}
+
+							{/* <Button variant="outlined" startIcon={<AddIcon />}
 							// onClick={handleOpen}
 							>
 								ДОДАТИ ДІАГНОСТИКУ
-							</Button>
+							</Button> */}
+
+
+							<Link to={`/cars/car/${vin}/newdiagnostic`}>
+								<Button variant="outlined" startIcon={<AddIcon />}
+								// onClick={handleOpen}
+								>
+									ДОДАТИ ДІАГНОСТИКУ
+								</Button>
+							</Link>
+
+
 							<Typography
 								sx={{
 									marginTop: "5px",
