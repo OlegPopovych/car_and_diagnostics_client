@@ -134,7 +134,7 @@ const HeaderLayout = () => {
 						alignItems: "center"
 					}}>
 					<Image
-						src="./logo.png"
+						src="./logo192.png"
 						height="38px"
 						width="66.5px"
 						fit="contain"

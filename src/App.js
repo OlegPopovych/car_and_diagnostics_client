@@ -47,14 +47,14 @@ function App() {
 				// 	return { ...oldValues, token: null };
 				// });
 			}
-			// call refreshToken every 5 minutes to renew the authentication token.
-			setTimeout(verifyUser, 5 * 60 * 1000);
+			// call refreshToken every 60 minutes to renew the authentication token.
+			setTimeout(verifyUser, 60 * 60 * 1000);
 		});
 	}, [setToken]); //setToken
 
-	// useEffect(() => {
-	// 	verifyUser();
-	// }, [verifyUser]);
+	useEffect(() => {
+		verifyUser();
+	}, [verifyUser]);
 
 	/**
 	 * Sync logout across tabs
@@ -74,43 +74,28 @@ function App() {
 	}, [syncLogout]);
 
 	return (
-		<>
-			<Routes>
-				<Route path="/" element={<TestHeader />} >
-					<Route index element={
+
+		<Routes>
+			<Route path="/" element={<ProtectedRoute><HeaderLayout /></ProtectedRoute>} >
+				<Route index element={
+					<ProtectedRoute>
+						<CarListPage />
+					</ProtectedRoute>
+				} />
+				<Route path="/cars/car/:vin" element={
+					<ProtectedRoute>
+						<SingleCarPage />
+					</ProtectedRoute>
+				} />
+				<Route path="/cars/car/newdiagnostic/:group" element={
+					<ProtectedRoute>
 						<DiagnosticCreatePage />
-					} />
-				</Route>
-			</Routes>
-
-
-
-			{/* <TestHeader>
-				<DiagnosticCreatePage />
-			</TestHeader> */}
-
-		</>
-		// <Routes>
-		// 	<Route path="/" element={<ProtectedRoute><HeaderLayout /></ProtectedRoute>} >
-		// 		<Route index element={
-		// 			<ProtectedRoute>
-		// 				<CarListPage />
-		// 			</ProtectedRoute>
-		// 		} />
-		// 		<Route path="/cars/car/:vin" element={
-		// 			<ProtectedRoute>
-		// 				<SingleCarPage />
-		// 			</ProtectedRoute>
-		// 		} />
-		// 		<Route path="/cars/car/:vin/newdiagnostic" element={
-		// 			<ProtectedRoute>
-		// 				<DiagnosticCreatePage />
-		// 			</ProtectedRoute>
-		// 		} />
-		// 	</Route >
-		// 	<Route path="/login" element={<Autorisation />} />
-		// 	<Route path="*" element={<NoMatch />} />
-		// </Routes >
+					</ProtectedRoute>
+				} />
+			</Route >
+			<Route path="/login" element={<Autorisation />} />
+			<Route path="*" element={<NoMatch />} />
+		</Routes >
 
 		// <div className="wrapper">
 		// 	<SingleCarPage />
@@ -125,12 +110,8 @@ const NoMatch = () => {
 const ProtectedRoute = ({ children }) => {
 	const location = useLocation();
 	const token = useSelector(selectToken);
-
-
-
-
-
 	// const dispatch = useDispatch();
+
 	// const verifyUser =  useCallback( async () => {
 	// 	await fetch(process.env.REACT_APP_API_ENDPOINT + "users/refreshToken", {
 	// 		method: "POST",
@@ -177,3 +158,21 @@ const ProtectedRoute = ({ children }) => {
 };
 
 export default App;
+
+
+// 	 <>
+// 			<Routes>
+// 				<Route path="/" element={<TestHeader />} >
+// 					<Route index element={
+// 						<DiagnosticCreatePage />
+// 					} />
+// 				</Route>
+// 			</Routes> 
+
+
+
+//  <TestHeader>
+// 				<DiagnosticCreatePage />
+// 			</TestHeader> 
+
+// </> 

@@ -5,22 +5,21 @@ import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import { Fragment } from 'react';
-import { TextField } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
 import { IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DoneIcon from '@mui/icons-material/Done';
+import {  styled } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useState } from 'react';
 import { addItemToCart } from '../../../store/cart_slice';
 import { useDispatch, useSelector } from 'react-redux';
-import { itemsSelector } from '../../../store/cart_slice';
+import { itemsSelector, removeItemFromCart, updateItemFromCart } from '../../../store/cart_slice';
+import { useEffect } from 'react';
 
 
-const ListItem = (props) => {
+const CartModalListItem = (props) => {
 	const dispatch = useDispatch(addItemToCart);
 	const cartsItems = useSelector(itemsSelector);
 
@@ -44,16 +43,51 @@ const ListItem = (props) => {
 		},
 	}));
 
+
+	//https://github.com/mui/material-ui/blob/v5.12.2/docs/data/material/components/text-fields/CustomizedInputs.js
+	const BootstrapInput = styled(InputBase)(({ theme }) => ({
+		'& .MuiInputBase-input': {
+			borderRadius: 4,
+			position: 'relative',
+			border: '1px solid #000',
+			fontSize: 10,
+			padding: '0px 0px',
+			marginRight: '5px',
+			marginLeft: '5px',
+			height: '100%'
+			// Use the system font instead of the default Roboto font.
+
+		},
+	}));
+
+
+
+
 	console.log(`data in list\`s element: ${props.name}, ${props.group}`);
 
-	const { id, name, positionInIllustration, group } = props;
+	 const { id,  group, positionInIllustration } = props;
+
+	// const [checkedLokal, setCheckedLokal] = useState([false, false]);
+	// const [countLokal, setCountLokal] = useState();
+	// const [descriptionLokal, setDescriptionLokal] = useState('');
+
 	const [checked, setChecked] = useState([false, false]);
 	const [count, setCount] = useState(0);
 	const [description, setDescription] = useState('');
+	const [name, setName] =useState('');
 
-	console.log(`checkboxes status from main: ${checked}`);
-	console.log(`counter from main: ${count}`);
-	console.log(`description from main: ${description}`);
+	useEffect(() => {
+		if (props.checked) {
+			setChecked(props.checked);
+		}
+		setCount(props.count);
+		setDescription(props.description);
+		setName(props.name);
+	}, []);
+
+	// console.log(`checkboxes status from main: ${checked}`);
+	// console.log(`counter from main: ${count}`);
+	// console.log(`description from main: ${description}`);
 
 	const handleChangeLeft = (event) => {
 		setChecked([event.target.checked, checked[1]]);
@@ -72,17 +106,10 @@ const ListItem = (props) => {
 		setDescription(e.target.value);
 	}
 
-	const idSearcher = (cartsItems, id) => {
-		const index = cartsItems.findIndex((item) => item.id === id);
-		console.log(`INDEX: ${index} , ${name}`)
-		if (index !== -1) {
-			return "red";
-		}
-	}
-
 	return (
 		<>
 			<Grid container columns={12}
+				fullWidth
 				sx={{
 					height: "60px",
 					alignItems: "center",
@@ -94,18 +121,17 @@ const ListItem = (props) => {
 						alignItems: "center"
 					}} >
 					<Typography
-						backgroundColor={() => idSearcher(cartsItems, id)}
 						sx={{
 							fontSize: "14px",
 							fontWeight: "600",
 							padding: "0px 10px"
 						}}>
-						{positionInIllustration}
+						{props.index}
 					</Typography>
 				</Grid>
 
 				<Grid item
-					lg={5}
+					lg={3}
 					sx={{
 						alignItems: "center"
 					}} >
@@ -119,7 +145,7 @@ const ListItem = (props) => {
 										fontWeight: "400",
 										padding: "0px 10px",
 									}}>
-									{props.name}
+									{name}
 								</Typography>
 
 
@@ -142,7 +168,7 @@ const ListItem = (props) => {
 				</Grid>
 
 				<Grid item
-					lg={3}
+					lg={2}
 					sx={{
 						alignItems: "center",
 						paddingLeft: "10px"
@@ -185,43 +211,23 @@ const ListItem = (props) => {
 				</Grid>
 
 				<Grid item
-					lg={1}
+					lg={4}
 					sx={{
 						display: "flex",
 						alignItems: "center",
-						flexDirection: "column"
+						flexDirection: "column",
+						paddingX: "0px",
+						paddingY: "0px"
 					}} >
-					<HtmlTooltip
-						title={
-							<Fragment>
-								<TextField
-									// sx={{
-									// 	marginBottom: "27px"
-									// }}
-									fullWidth
-									id="outlined-multiline-static"
-									// label="Додаткова інформація про деталь"
-									multiline
-									rows={4}
-									value={description}
-									onChange={handleDescriptionChange}
-								/>
-							</Fragment>
-						}
-					>
-						<DescriptionIcon />
-						{/* <Typography
-							// noWrap={true}
-							sx={{
-								// height: "60px",
-								fontSize: "14px",
-								fontWeight: "400",
-								padding: "0px 10px",
-								// overflow: "hidden"
-							}}>
-							Опис
-						</Typography> */}
-					</HtmlTooltip>
+					<BootstrapInput
+						fullWidth
+						id="outlined-multiline-static"
+						// label="Додаткова інформація про деталь"
+						multiline
+						rows={2}
+						value={description}
+					onChange={handleDescriptionChange}
+					/>
 
 
 
@@ -236,6 +242,7 @@ const ListItem = (props) => {
 					}} >
 					<>
 						<input
+							value={count}
 							style={counterStyle}
 							type="number"
 							id="count"
@@ -247,11 +254,18 @@ const ListItem = (props) => {
 
 					</>
 					<IconButton size="large" aria-label="delete" sx={{ color: "#FA4A5F" }}
-						onClick={() => dispatch(addItemToCart({ id, name, checked, count, description, group, positionInIllustration }))}
+					 onClick={() => dispatch(updateItemFromCart({ id, name, checked, count, description, group, positionInIllustration }))}
 					>
-						<AddIcon sx={{ fontSize: 30 }} />
+						<ChangeCircleIcon sx={{ fontSize: 30 }} />
 						{/* <DoneIcon/> */}
 					</IconButton>
+					<IconButton size="large" aria-label="delete" sx={{ color: "#FA4A5F" }}
+					onClick={() => dispatch(removeItemFromCart( id))}
+					>
+						<DeleteIcon sx={{ fontSize: 30 }} />
+						{/* <DoneIcon/> */}
+					</IconButton>
+
 				</Grid>
 			</Grid>
 			<Box
@@ -264,4 +278,4 @@ const ListItem = (props) => {
 	);
 }
 
-export default ListItem;
+export default CartModalListItem;

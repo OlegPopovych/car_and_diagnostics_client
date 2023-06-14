@@ -38,6 +38,7 @@ const SingleCarPage = () => {
 	const [error, setError] = useState("");
 	const [successMessage, setSuccessMessage] = useState('');
 
+
 	const token = useSelector(selectToken);
 	const user = useSelector(selectUser);
 	const { carLoadingStatus } = useSelector(state => state.cars);
@@ -51,6 +52,12 @@ const SingleCarPage = () => {
 
 	// const dispatchsetUser = useDispatch(setUser);
 	const dispatch = useDispatch();
+
+
+
+
+
+
 
 	useEffect(() => {
 		console.log("start Effect")
@@ -70,7 +77,6 @@ const SingleCarPage = () => {
 		}
 	}, [car])
 
-	console.log(car[0]);
 
 	const formSubmitHandler = (e) => {
 		e.preventDefault();
@@ -208,7 +214,7 @@ const SingleCarPage = () => {
 							</Button> */}
 
 
-							<Link to={`/cars/car/${vin}/newdiagnostic`}>
+							<Link to={`/cars/car/newdiagnostic/${group}`}>
 								<Button variant="outlined" startIcon={<AddIcon />}
 								// onClick={handleOpen}
 								>
@@ -309,7 +315,7 @@ const SingleCarPage = () => {
 									<MenuItem value="">
 										<em>None</em>
 									</MenuItem>
-									<MenuItem value={10}>Golf 5</MenuItem>
+									<MenuItem value={"passatb8"}>Passat B8</MenuItem>
 									<MenuItem value={20}>Touareg</MenuItem>
 									<MenuItem value={30}>Transporter T5</MenuItem>
 									<MenuItem value={30}>Audi A6</MenuItem>
@@ -349,7 +355,8 @@ const SingleCarPage = () => {
 						sx={{
 							alignItems: "center"
 						}} >
-						<ListOfDiagnostic />
+						{car[0] ? <ListOfDiagnostic /> : <>no data</>}
+
 					</Grid>
 
 				</Grid>

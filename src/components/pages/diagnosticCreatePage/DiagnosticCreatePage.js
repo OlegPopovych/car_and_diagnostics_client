@@ -1,90 +1,78 @@
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
-import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import SaveIcon from '@mui/icons-material/Save';
 import Grid from '@mui/material/Grid';
-import Image from 'mui-image';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { IconButton } from '@mui/material';
-
-
-import * as React from 'react';
+import Modal from '@mui/material/Modal';
 import { styled } from '@mui/material/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
+
+
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useParams, Link } from 'react-router-dom';
 
 import TabImage from './TabImage';
 import MainImage from './MainImage';
 import ListHeader from './ListHeader';
 import ListItem from './ListItem';
+import CartsModal from '../../CartsModal';
 
 
 import { globalizedSelector } from "../../../store/car_slice";
 import { selectToken, setToken } from "../../../store/token_slice";
 import { selectUser } from "../../../store/user_slice";
+import { catalogueSelector } from '../../../store/catalogue_slice';
+import { fetchCatalogue } from '../../../store/catalogue_slice';
+import { itemsSelector } from '../../../store/cart_slice';
+
 
 
 
 const DiagnosticCreatePage = () => {
-	const car = useSelector(globalizedSelector.selectAll);
+	const cartsItems = useSelector(itemsSelector);
+	const catalogue = useSelector(catalogueSelector.selectAll);
 	const token = useSelector(selectToken);
 	const user = useSelector(selectUser);
+	const car = useSelector(globalizedSelector.selectAll);
+	const { catalogueLoadingStatus } = useSelector(state => state.catalogue);
+	const dispatch = useDispatch();
 
+	const [selectedGroup, setselectedGroup] = useState('frontParts');
+	const [value, setValue] = useState('0');
+	const [selectedIllustration, setSelectedIllustration] = useState('');
+	const [diagnosticNumber, setDiagnosticNumber] = useState('error');
+
+	//MODAL HANDLER
+	const [open, setOpen] = useState(false);
+	const handleOpen = () => setOpen(true);
+	const handleClose = () => setOpen(false);
+
+	const smth = useParams();
+	console.log(smth);
+	const { group } = smth;
+
+	useEffect(() => {
+		console.log("start Effect")
+		dispatch(fetchCatalogue({ token, group }));
+		createDiagnosticNumber();
+		console.log("finish Effect")
+		// eslint-disable-next-line
+	}, []);
+
+	console.log("каталог: ", catalogue);
+	console.log("каталог статус: ", catalogueLoadingStatus)
 
 	//forom exemple
-	const AntTabs = styled(Tabs)({
-		borderBottom: '1px solid #e8e8e8',
-		'& .MuiTabs-indicator': {
-			backgroundColor: '#1890ff',
-		},
-	});
-
-	const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
-		textTransform: 'none',
-		minWidth: 0,
-		[theme.breakpoints.up('sm')]: {
-			minWidth: 0,
-		},
-		fontWeight: theme.typography.fontWeightRegular,
-		marginRight: theme.spacing(1),
-		color: 'rgba(0, 0, 0, 0.85)',
-		fontFamily: [
-			'-apple-system',
-			'BlinkMacSystemFont',
-			'"Segoe UI"',
-			'Roboto',
-			'"Helvetica Neue"',
-			'Arial',
-			'sans-serif',
-			'"Apple Color Emoji"',
-			'"Segoe UI Emoji"',
-			'"Segoe UI Symbol"',
-		].join(','),
-		'&:hover': {
-			color: '#40a9ff',
-			opacity: 1,
-		},
-		'&.Mui-selected': {
-			color: '#1890ff',
-			fontWeight: theme.typography.fontWeightMedium,
-		},
-		'&.Mui-focusVisible': {
-			backgroundColor: '#d1eaff',
-		},
-	}));
 
 	const StyledTabs = styled((props) => (
 		<Tabs
@@ -117,7 +105,6 @@ const DiagnosticCreatePage = () => {
 		// 	backgroundColor: '#635ee7',
 		// },
 	});
-
 	const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
 		({ theme }) => ({
 			padding: '0',
@@ -142,16 +129,82 @@ const DiagnosticCreatePage = () => {
 		}),
 	);
 
-	//  function CustomizedTabs() {
-	const [value, setValue] = useState('0');
-
-	const handleChange = (event, newValue) => {
+	//  function CustomizedTabs() 
+	const handleTabChange = (event, newValue) => {
 		setValue(newValue);
 		console.log(newValue)
 	};
-	//forom exemple
+
+	const handleGroupChange = (event) => {
+		setselectedGroup(event.target.value);
+		setSelectedIllustration('');
+		console.log(`new selected group: ${event.target.value}`);
+		// console.log(`selected from catalogue ${catalogue[0].[event.target.value].illustrations}`)
+		// console.log(catalogue[0].[event.target.value].illustrations) 
+	};
+
+	const handleSelectedIllustration = (data) => {
+		setSelectedIllustration(data);
+		console.log(`new SelectedIllustration: ${data}`);
+		// console.log(`selected from catalogue ${catalogue[0].[event.target.value].illustrations}`)
+		// console.log(catalogue[0].[event.target.value].illustrations) 
+	};
+
+	const createDiagnosticNumber = () => {
+		if (!car[0]) return;
+		const date = new Date();
+		const vinSplice = car[0].vin.slice(-6);
+		const min = date.getMinutes();
+		const hh = date.getHours()
+		console.log(vinSplice, date, `${vinSplice}/${hh}/${min}`);
+		setDiagnosticNumber(`${vinSplice}/${hh}/${min}`);
+
+	}
 
 
+	const renderTabs = (data, status) => {
+		console.log('таби data', data)
+		if (status === "loading") {
+			return <div>Loading elements</div>
+		} else if (status === "error") {
+			return <div>Error loading</div>
+		}
+		if (data && data.length > 0) {
+			console.log("tabs : ", data, data.length);
+			return data[0].[selectedGroup].illustrations.map(
+				(illustration) => {
+					console.log("renderTabs map : ", illustration);
+					return (
+						<StyledTab
+							value={illustration}
+							label={<TabImage illustration={illustration} handleSelectedIllustration={handleSelectedIllustration} />}
+						/>
+					)
+				})
+		}
+	}
+
+	const renderList = (data, selector) => {
+		console.log(" renderList selector : ", selector);
+		console.log(" renderList selectedGroup : ", selectedGroup);
+		if (!selector) {
+			return <div>Схему не обрано</div>
+		}
+		if (data && data.length > 0) {
+			console.log("tabs : ", data, data.length);
+			return data[0].[selectedGroup].[selector].map(
+				(elem) => {
+					console.log("renderTabs map : ", { ...elem });
+					return (
+						// <Car key={_id} {...props} />
+						<ListItem {...elem} />
+					)
+				})
+		}
+	}
+
+	const tabsElements = renderTabs(catalogue, catalogueLoadingStatus);
+	const listElements = renderList(catalogue, selectedIllustration);
 
 
 
@@ -178,6 +231,17 @@ const DiagnosticCreatePage = () => {
 							display: "flex",
 							justifyContent: "space-between"
 						}}>
+						<Modal disableEnforceFocus
+							open={open}
+							onClose={handleClose}
+							aria-labelledby="modal-modal-title"
+							aria-describedby="modal-modal-description"
+						>
+							<>
+								<CartsModal />
+							</>
+
+						</Modal>
 						<Box component={"div"}
 							sx={{
 								display: "flex",
@@ -189,7 +253,7 @@ const DiagnosticCreatePage = () => {
 									fontSize: "32px",
 									fontWeight: "600",
 								}} >
-								{`Діагностика №123456  [${car[0] ? car[0].carNumber : "empty"}]`}
+								{`Діагностика №${diagnosticNumber} [${car[0] ? car[0].carNumber : "empty"}]`}
 							</Typography>
 						</Box>
 						<Box
@@ -200,13 +264,13 @@ const DiagnosticCreatePage = () => {
 							}}>
 
 
-							<Link to={`/cars/car/newdiagnostic`}								>
-								<Button variant="outlined"
-								// onClick={handleOpen}
-								>
-									ПЕРЕГЛЯНУТИ ДІАГНОСТИКУ
-								</Button>
-							</Link>
+							{/* <Link to={`/cars/car/newdiagnostic`}								> */}
+							<Button variant="outlined"
+								onClick={handleOpen}
+							>
+								ПЕРЕГЛЯНУТИ ДІАГНОСТИКУ
+							</Button>
+							{/* </Link> */}
 
 
 							<Link to={`/cars/car/newdiagnostic`}>
@@ -251,19 +315,19 @@ const DiagnosticCreatePage = () => {
 							<Select
 								labelId="demo-select-small"
 								id="demo-select-small"
-								// value={group}
+								value={selectedGroup}
 								label="Group"
-							// onChange={handleGroupChange}
+								onChange={handleGroupChange}
 							>
 
-								<MenuItem value={10}>Передня підвіска</MenuItem>
-								<MenuItem value={20}>Задня підвіска</MenuItem>
-								<MenuItem value={30}>Система гальм</MenuItem>
+								<MenuItem value={'frontParts'}>Передня підвіска</MenuItem>
+								<MenuItem value={'rearParts'}>Задня підвіска</MenuItem>
+								<MenuItem value={'brake'}>Система гальм</MenuItem>
 							</Select>
 						</FormControl>
-						<MainImage />
+						<MainImage selectedIllustration={selectedIllustration} />
 						{/* <Image
-							src="./615000.png"
+							src="./logo.png"
 							// height="50%"
 							width="100%"
 							fit="contain"
@@ -298,6 +362,7 @@ const DiagnosticCreatePage = () => {
 							Список деталей
 						</Typography>
 						<ListHeader />
+						{/* <List/> */}
 						<Box
 							sx={{
 								flexDirection: "column",
@@ -306,36 +371,12 @@ const DiagnosticCreatePage = () => {
 								overflowY: "scroll",
 								maxHeight: "500px",
 							}}>
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
-							<ListItem />
+							{listElements}
 						</Box>
 
 					</Grid>
 
 				</Grid>
-
-
-
-
-
-
-
-
 
 				<Box sx={{ width: '100%' }}>
 
@@ -371,26 +412,24 @@ const DiagnosticCreatePage = () => {
 							}}>
 							<StyledTabs
 								value={value}
-								onChange={handleChange}
+								onChange={handleTabChange}
 								aria-label="ant example"
 								variant="scrollable"
 								scrollButtons
 								allowScrollButtonsMobile>
-								<StyledTab value="0" label={<TabImage />} />
-								<StyledTab value="1" label={<TabImage />} />
-								<StyledTab value="2" label="Tab 4" />
-								<StyledTab value="3" label={<TabImage />} />
-								<StyledTab value="4" label="Tab 6" />
-								<StyledTab value="5" label="Tab 7" />
-								<StyledTab value="6" label="Tab 8" />
-								<StyledTab value="7" label="Tab 9" />
+								{tabsElements}
 							</StyledTabs>
 						</Box>
 					</TabContext>
 
-
 				</Box>
-
+				{/* <div>
+					{cartsItems.map(item => {
+						return (
+							<h1>{`Кількість: ${item.count}     Назва: ${item.name}     Опис: ${item.description}     ID : ${item.id}`}</h1>
+						)
+					})}
+				</div> */}
 			</Container>
 
 

@@ -61,7 +61,7 @@ const Login = () => {
 				// });
 			}
 			// call refreshToken every 5 minutes to renew the authentication token.
-			setTimeout(verifyUser, 5 * 60 * 1000);
+			// setTimeout(verifyUser, 5* 60 * 1000);
 		});
 	}, [setToken]); //setToken
 

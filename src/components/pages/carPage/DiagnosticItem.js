@@ -12,11 +12,16 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 
 
 
-const DiagnosticItem = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', theDateOfTheLastDiagnosis = "" }) => {
+const DiagnosticItem = (props) => {
 
 	// const [open, setOpen] = useState(false);
 	// const handleOpen = () => setOpen(true);
 	// const handleClose = () => setOpen(false);
+	console.log(props);
+	const { _id, vin, author, create_date, index } = props;
+	const create_dateNew = new Date(create_date);
+	console.log(create_dateNew);
+	const date = `${create_dateNew.getDate()}/0${create_dateNew.getMonth() + 1}/${create_dateNew.getFullYear()} ${create_dateNew.getHours()}:${create_dateNew.getMinutes()}`;
 
 	return (
 		<>
@@ -36,7 +41,8 @@ const DiagnosticItem = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', the
 							fontSize: "14px",
 							fontWeight: "400",
 							padding: "0px 10px"
-						}}>12412424
+						}}>
+						{index}
 					</Typography>
 				</Grid>
 				<Grid item
@@ -62,7 +68,8 @@ const DiagnosticItem = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', the
 							fontSize: "14px",
 							fontWeight: "400",
 							padding: "0px 10px"
-						}}>Мишка Гайка
+						}}>
+						{`${author.firstName} ${author.lastName}`}
 					</Typography>
 				</Grid>
 				<Grid item
@@ -75,7 +82,8 @@ const DiagnosticItem = ({ vin, carNumber, model, theNumberOfDiagnoses = '0', the
 							fontSize: "14px",
 							fontWeight: "400",
 							padding: "0px 10px"
-						}}>01/01/2023
+						}}>
+						{date}
 					</Typography>
 				</Grid>
 

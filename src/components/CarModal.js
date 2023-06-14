@@ -188,7 +188,8 @@ const CarModal = () => {
 						<em>None</em>
 					</MenuItem>
 					<ListSubheader>Volksvagen</ListSubheader>
-					<MenuItem value={"vwgolf6"}>Golf 6</MenuItem>
+					<MenuItem value={"Golf 6"}>Golf 6</MenuItem>
+					<MenuItem value={"Passat B8"}>Passat B8</MenuItem>
 					<MenuItem value={"vwgolf7"}>Golf 7</MenuItem>
 					<MenuItem value={"vwgolf8"}>Golf 8</MenuItem>
 					<ListSubheader>Audi</ListSubheader>
@@ -209,7 +210,7 @@ const CarModal = () => {
 					<MenuItem value="">
 						<em>None</em>
 					</MenuItem>
-					<MenuItem value={10}>Golf 5</MenuItem>
+					<MenuItem value={"passatb8"}>Passat B8</MenuItem>
 					<MenuItem value={20}>Touareg</MenuItem>
 					<MenuItem value={30}>Transporter T5</MenuItem>
 					<MenuItem value={30}>Audi A6</MenuItem>

@@ -1,19 +1,21 @@
 import { createSlice, createAsyncThunk, createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 
-const carAdapter = createEntityAdapter({
+const catalogueAdapter = createEntityAdapter({
 	selectId: (item) => item._id
 }); // створює об'єкт функцій для керування стейтом, 
 
-const initialState = carAdapter.getInitialState({  //адаптер створює початковий стейт
-	carLoadingStatus: 'idle'
+const initialState = catalogueAdapter.getInitialState({  //адаптер створює початковий стейт
+	catalogueLoadingStatus: 'idle'
 });
 
-export const fetchCar = createAsyncThunk(
-	'car/fetchCar',
+
+
+export const fetchCatalogue = createAsyncThunk(
+	'catalogue/fetchCatalogue',
 	async (arg, thunkAPI) => {
-		console.log(`arg: ${arg.token}, ${arg.vin}`)
+		console.log(`arg: ${arg.token}, ${arg.group}`)
 		const res = await fetch(
-			process.env.REACT_APP_API_ENDPOINT + `cars/car/${arg.vin}`, {
+			process.env.REACT_APP_API_ENDPOINT + `cars/car/diagnostic/${arg.group}`, {
 			method: "GET",
 			credentials: "include",
 			headers: {
@@ -22,26 +24,26 @@ export const fetchCar = createAsyncThunk(
 			},
 		})
 		const toSend = await res.json()
-		console.log(`single car data: ${toSend}`)
+		console.log(`catalogue data: ${toSend}`)
 		return [toSend];
 
 	}
 )
 
-const carSlice = createSlice({
-	name: 'car',
+const catalogueSlice = createSlice({
+	name: 'catalogue',
 	initialState,
 	reducers: {
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(fetchCar.pending, state => { state.carLoadingStatus = 'loading' })
-			.addCase(fetchCar.fulfilled, (state, action) => {
-				state.carLoadingStatus = 'idle';
-				carAdapter.setAll(state, action.payload);
+			.addCase(fetchCatalogue.pending, state => { state.catalogueLoadingStatus = 'loading' })
+			.addCase(fetchCatalogue.fulfilled, (state, action) => {
+				state.catalogueLoadingStatus = 'idle';
+				catalogueAdapter.setAll(state, action.payload);
 			})
-			.addCase(fetchCar.rejected, (state, action) => {
-				state.carLoadingStatus = "error";
+			.addCase(fetchCatalogue.rejected, (state, action) => {
+				state.catalogueLoadingStatus = "error";
 				console.log(action.payload.errorMessage)
 			})
 
@@ -51,7 +53,7 @@ const carSlice = createSlice({
 
 
 
-const { actions, reducer } = carSlice;
+const { actions, reducer } = catalogueSlice;
 
 // const { selectAll } = heroesAdapter.getSelectors(state => state.heroes); // метод getSelectors дає метод selectAll який повертає масив
 
@@ -71,11 +73,11 @@ const { actions, reducer } = carSlice;
 
 // export default reducer;
 
-export const globalizedSelector = carAdapter.getSelectors(
-	(state) => state.car
+export const catalogueSelector = catalogueAdapter.getSelectors(
+	(state) => state.catalogue
 );
 
-export default carSlice;
+export default catalogueSlice;
 
-export const { carFetching, carFetched, carFetchingError } = carSlice.actions;
+export const { catalogueFetching, catalogueFetched, catalogueFetchingError } = catalogueSlice.actions;
 
